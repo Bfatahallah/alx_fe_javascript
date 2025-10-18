@@ -183,30 +183,24 @@ async function syncWithServer(notifyUser = true) {
   syncStatus.textContent = 'Syncing with server...';
   try {
     const serverQuotes = await fetchQuotesFromServer();
-    let conflict = false, added = 0, updated = 0;
+    let conflict = false;
     // Server wins: for each server quote, replace local if text matches; else add if not present
     serverQuotes.forEach(serverQ => {
       const localQ = findQuoteByText(quotes, serverQ.text);
       if (!localQ) {
         quotes.push({...serverQ});
-        added++;
       } else if (localQ.category !== serverQ.category) {
         localQ.category = serverQ.category;
         conflict = true;
-        updated++;
       }
     });
     saveQuotes();
     populateCategories();
     showRandomQuote();
-    let msg = `Synced! `;
-    if (added > 0) msg += `Added: ${added}. `;
-    if (updated > 0) msg += `Updated: ${updated} (conflicts).`;
-    if (!added && !updated) msg += 'No changes.';
-    syncStatus.textContent = msg.trim();
+    syncStatus.textContent = 'Quotes synced with server!';
     if (conflict && notifyUser) alert('Conflicts resolved: Server versions replaced some categories.');
   } catch (e) {
-    syncStatus.textContent = 'Sync failed!';
+    syncStatus.textContent = 'Sync failed! ' + (e.message || e);
   }
 }
 
