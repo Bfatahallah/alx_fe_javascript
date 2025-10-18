@@ -7,14 +7,30 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Dynamic Quote Generator</h1>
-  <div id="quoteDisplay"></div>
-  <button id="newQuote">Show New Quote</button>
-  <div>
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button id="addQuoteBtn">Add Quote</button>
-  </div>
+  <main class="container">
+    <section class="card" style="text-align: center;">
+      <h1 style="margin-bottom: 0.5rem;">Dynamic Quote Generator</h1>
+      <div id="quoteDisplay" class="quote"></div>
+      <div style="margin: 1rem 0;">
+        <button id="newQuote" class="btn">Show New Quote</button>
+      </div>
+    </section>
+    <section class="card" style="max-width:400px;margin:1.5rem auto 0 auto;text-align:center;">
+      <h2 style="font-size:1.1rem;margin-bottom:0.5rem;">Add Your Own Quote</h2>
+      <input id="newQuoteText" type="text" placeholder="Enter a new quote" style="width:100%;margin-bottom:0.5rem;padding:0.5rem;" />
+      <input id="newQuoteCategory" type="text" placeholder="Enter quote category" style="width:100%;margin-bottom:0.8rem;padding:0.5rem;" />
+      <button id="addQuoteBtn" class="btn" style="width:100%;">Add Quote</button>
+      <div id="quoteMessage" class="muted" style="margin-top:0.5rem;"></div>
+      <hr style="margin:1.2rem 0 0.8rem 0; border:none; border-top:1px solid #232940;"/>
+      <div style="margin-bottom:0.6rem;">
+        <button id="exportBtn" class="btn" style="margin-bottom:0.6rem;width:calc(50% - 4px);">Export as JSON</button>
+        <label for="importFile" class="btn btn-secondary" style="width:calc(50% - 4px);margin-left:8px;cursor:pointer;display:inline-block;">Import from JSON
+          <input type="file" id="importFile" accept=".json" style="display:none;" />
+        </label>
+      </div>
+      <div class="muted" style="font-size:.94em;margin-top:0.5rem;">Quotes are saved in your browser and can be exported/imported as JSON for backup or sharing.</div>
+    </section>
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
