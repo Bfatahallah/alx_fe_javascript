@@ -20,6 +20,29 @@ function loadQuotes() {
 
 quotes = loadQuotes();
 
+// category filter logic: just simple populate and change handling
+function getAllCategories() {
+  // collect all categories from the quotes array (no duplicates)
+  const cats = quotes.map(q => q.category).filter(c => !!c);
+  return Array.from(new Set(cats));
+}
+
+function populateCategories() {
+  const sel = document.getElementById('categoryFilter');
+  if (!sel) return;
+  sel.innerHTML = '';
+  const all = document.createElement('option');
+  all.value = 'all';
+  all.text = 'All';
+  sel.appendChild(all);
+  getAllCategories().forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat;
+    opt.text = cat;
+    sel.appendChild(opt);
+  });
+}
+
 // For session persistence
 function saveLastViewedQuote(index) {
   sessionStorage.setItem('lastViewedQuote', index);
@@ -29,19 +52,28 @@ function getLastViewedQuote() {
   return idx !== null ? parseInt(idx) : null;
 }
 
+function getFilteredQuotes() {
+  const catSel = document.getElementById('categoryFilter');
+  if (!catSel || catSel.value === 'all') return quotes;
+  return quotes.filter(q => q.category === catSel.value);
+}
+
 function showRandomQuote() {
   const display = document.getElementById('quoteDisplay');
-  if (!quotes.length) {
-    display.textContent = 'No quotes available.';
+  const filtered = getFilteredQuotes();
+  if (!filtered.length) {
+    display.textContent = 'No quotes for this category!';
     return;
   }
-  let idx = Math.floor(Math.random() * quotes.length);
-  display.textContent = `"${quotes[idx].text}" [${quotes[idx].category}]`;
+  let idx = Math.floor(Math.random() * filtered.length);
+  display.textContent = `"${filtered[idx].text}" [${filtered[idx].category}]`;
   saveLastViewedQuote(idx);
 }
 
-// Restore last viewed quote if possible
 window.addEventListener('DOMContentLoaded', () => {
+  populateCategories();
+  const catSel = document.getElementById('categoryFilter');
+  if (catSel) catSel.addEventListener('change', showRandomQuote);
   const idx = getLastViewedQuote();
   const display = document.getElementById('quoteDisplay');
   if (quotes.length && idx !== null && idx >= 0 && idx < quotes.length) {
@@ -52,7 +84,6 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
-
 document.getElementById('addQuoteBtn').addEventListener('click', addQuote);
 function addQuote() {
   const textEl = document.getElementById('newQuoteText');
@@ -66,6 +97,7 @@ function addQuote() {
   }
   quotes.push({ text, category });
   saveQuotes();
+  populateCategories(); // update dropdown with new category if needed
   textEl.value = '';
   catEl.value = '';
   msgEl.textContent = 'Quote added!';
@@ -106,6 +138,7 @@ function importFromJsonFile(event) {
       }
       if (added > 0) {
         saveQuotes();
+        populateCategories();
         alert('Quotes imported successfully!');
         showRandomQuote();
       } else {
