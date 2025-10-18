@@ -172,8 +172,8 @@ function findQuoteByText(arr, text) {
   return arr.find(q => q.text === text);
 }
 
-// Simulate fetching quotes from server (dummy, uses jsonplaceholder)
-async function fetchServerQuotes() {
+// Fetches quote objects from the server (dummy, childlike version)
+async function fetchQuotesFromServer() {
   const resp = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=10');
   const posts = await resp.json();
   return posts.map(mapServerToQuote);
@@ -182,7 +182,7 @@ async function fetchServerQuotes() {
 async function syncWithServer(notifyUser = true) {
   syncStatus.textContent = 'Syncing with server...';
   try {
-    const serverQuotes = await fetchServerQuotes();
+    const serverQuotes = await fetchQuotesFromServer();
     let conflict = false, added = 0, updated = 0;
     // Server wins: for each server quote, replace local if text matches; else add if not present
     serverQuotes.forEach(serverQ => {
