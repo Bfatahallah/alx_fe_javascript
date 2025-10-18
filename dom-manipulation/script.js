@@ -228,3 +228,23 @@ if (document.getElementById('autoSync').checked) {
   autoSyncTimer = setInterval(() => syncWithServer(false), 30000);
   syncStatus.textContent = 'Auto Sync enabled.';
 }
+
+document.getElementById('uploadBtn').addEventListener('click', uploadQuotes);
+async function uploadQuotes() {
+  const uploadStatus = document.getElementById('uploadStatus');
+  uploadStatus.textContent = 'Uploading...';
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(quotes),
+    });
+    if (!response.ok) throw new Error('Failed with status ' + response.status);
+    const result = await response.json();
+    uploadStatus.textContent = 'Quotes uploaded! (Simulated)';
+  } catch (e) {
+    uploadStatus.textContent = 'Upload failed! ' + (e.message || e);
+  }
+}
