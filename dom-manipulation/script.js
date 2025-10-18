@@ -157,3 +157,74 @@ function importFromJsonFile(event) {
   };
   reader.readAsText(file);
 }
+
+// --- SERVER SYNC DEMO --- //
+const syncStatus = document.getElementById('syncStatus');
+let autoSyncTimer = null;
+
+// Map server posts to quote shape
+function mapServerToQuote(post) {
+  return { text: String(post.title), category: String(post.body) };
+}
+
+// Find quote by text
+function findQuoteByText(arr, text) {
+  return arr.find(q => q.text === text);
+}
+
+// Simulate fetching quotes from server (dummy, uses jsonplaceholder)
+async function fetchServerQuotes() {
+  const resp = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=10');
+  const posts = await resp.json();
+  return posts.map(mapServerToQuote);
+}
+
+async function syncWithServer(notifyUser = true) {
+  syncStatus.textContent = 'Syncing with server...';
+  try {
+    const serverQuotes = await fetchServerQuotes();
+    let conflict = false, added = 0, updated = 0;
+    // Server wins: for each server quote, replace local if text matches; else add if not present
+    serverQuotes.forEach(serverQ => {
+      const localQ = findQuoteByText(quotes, serverQ.text);
+      if (!localQ) {
+        quotes.push({...serverQ});
+        added++;
+      } else if (localQ.category !== serverQ.category) {
+        localQ.category = serverQ.category;
+        conflict = true;
+        updated++;
+      }
+    });
+    saveQuotes();
+    populateCategories();
+    showRandomQuote();
+    let msg = `Synced! `;
+    if (added > 0) msg += `Added: ${added}. `;
+    if (updated > 0) msg += `Updated: ${updated} (conflicts).`;
+    if (!added && !updated) msg += 'No changes.';
+    syncStatus.textContent = msg.trim();
+    if (conflict && notifyUser) alert('Conflicts resolved: Server versions replaced some categories.');
+  } catch (e) {
+    syncStatus.textContent = 'Sync failed!';
+  }
+}
+
+document.getElementById('syncNow').addEventListener('click', () => {
+  syncWithServer();
+});
+
+document.getElementById('autoSync').addEventListener('change', function() {
+  if (this.checked) {
+    autoSyncTimer = setInterval(() => syncWithServer(false), 30000);
+    syncStatus.textContent = 'Auto Sync enabled.';
+  } else {
+    if (autoSyncTimer) clearInterval(autoSyncTimer);
+    syncStatus.textContent = 'Auto Sync disabled.';
+  }
+});
+// If checked on load, start auto sync
+if (document.getElementById('autoSync').checked) {
+  autoSyncTimer = setInterval(() => syncWithServer(false), 30000);
+  syncStatus.textContent = 'Auto Sync enabled.';
+}
