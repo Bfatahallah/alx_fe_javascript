@@ -210,9 +210,10 @@ async function syncWithServer(notifyUser = true) {
   }
 }
 
-document.getElementById('syncNow').addEventListener('click', () => {
+function syncQuotes() {
   syncWithServer();
-});
+}
+document.getElementById('syncNow').addEventListener('click', syncQuotes);
 
 document.getElementById('autoSync').addEventListener('change', function() {
   if (this.checked) {
