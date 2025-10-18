@@ -43,6 +43,13 @@ function populateCategories() {
   });
 }
 
+// Simple filterQuote function by selected category
+function filterQuote() {
+  const catSel = document.getElementById('categoryFilter');
+  if (!catSel || catSel.value === 'all') return quotes;
+  return quotes.filter(q => q.category === catSel.value);
+}
+
 // For session persistence
 function saveLastViewedQuote(index) {
   sessionStorage.setItem('lastViewedQuote', index);
@@ -52,15 +59,9 @@ function getLastViewedQuote() {
   return idx !== null ? parseInt(idx) : null;
 }
 
-function getFilteredQuotes() {
-  const catSel = document.getElementById('categoryFilter');
-  if (!catSel || catSel.value === 'all') return quotes;
-  return quotes.filter(q => q.category === catSel.value);
-}
-
 function showRandomQuote() {
   const display = document.getElementById('quoteDisplay');
-  const filtered = getFilteredQuotes();
+  const filtered = filterQuote();
   if (!filtered.length) {
     display.textContent = 'No quotes for this category!';
     return;
