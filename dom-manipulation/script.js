@@ -20,6 +20,12 @@ function loadQuotes() {
 
 quotes = loadQuotes();
 
+// Gets the current selected value of the category dropdown
+function selectedCategory() {
+  const sel = document.getElementById('categoryFilter');
+  return sel ? sel.value : 'all';
+}
+
 // category filter logic: just simple populate and change handling
 function getAllCategories() {
   // collect all categories from the quotes array (no duplicates)
@@ -43,11 +49,10 @@ function populateCategories() {
   });
 }
 
-// Simple filterQuote function by selected category
 function filterQuote() {
-  const catSel = document.getElementById('categoryFilter');
-  if (!catSel || catSel.value === 'all') return quotes;
-  return quotes.filter(q => q.category === catSel.value);
+  const cat = selectedCategory();
+  if (!cat || cat === 'all') return quotes;
+  return quotes.filter(q => q.category === cat);
 }
 
 // For session persistence
