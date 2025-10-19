@@ -24,6 +24,6 @@ This project is a simple web app for generating, viewing, adding, and organizing
    - **Sync with Server**: Click 'Sync with Server' to simulate fetching and merging from a remote API. You'll see a status message and any conflict alerts.
    - **Auto Sync**: Toggle auto-sync for periodic server merges.
    - **Upload Quotes**: Post your current quotes to the fake server using the Upload Quotes button (simulated only).
-3. **Data Persistence**: Close and reopen the page—your quotes and last session will be remembered.
+3. **Data Persistence**: Close and reopen the page, your quotes and last session will be remembered.
 
-No installation or build is needed—just use your browser!
+No installation or build is needed, just use your browser!
